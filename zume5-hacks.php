@@ -14,5 +14,5 @@
  * Text Domain:       my-basics-plugin
  * Domain Path:       /languages
  */
-
 require_once( 'qr-redirect.php' );
+
