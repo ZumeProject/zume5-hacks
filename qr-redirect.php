@@ -119,7 +119,7 @@ class Zume_QR_Redirect
          * Redirect by Video ID
          */
         else if  ( isset( $_GET['v'] ) ) {
-            $link = 'https://zume5.training/zume_app/video/?id='; // @todo: change to zume from zume5
+            $link = 'https://zume .training/zume_app/video/?id='; // @todo: change to zume from zume5
             $video_id = $_GET['v'];
 
             $link = $link . $video_id;
