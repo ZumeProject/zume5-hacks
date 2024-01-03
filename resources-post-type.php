@@ -90,7 +90,7 @@ class Zume_QR_Post_Type
      * @param array  $args
      * @param array  $taxonomies
      */
-    public function __construct( $post_type = 'zume_qr_links', $singular = 'QR Link', $plural = 'QR Links', $args = array(), $taxonomies = array() ) {
+    public function __construct( $post_type = 'zume_resource', $singular = 'Resource', $plural = 'Resources', $args = array(), $taxonomies = array() ) {
         $this->post_type = $post_type;
         $this->singular = $singular;
         $this->plural = $plural;
@@ -128,16 +128,16 @@ class Zume_QR_Post_Type
             // let's now add all the options for this post type
             array(
                 'labels' => array(
-                    'name' => 'Zume QR Link', /* This is the Title of the Group */
-                    'singular_name' => 'Zume QR Link', /* This is the individual type */
-                    'all_items' => 'All Zume QR Links', /* the all items menu item */
+                    'name' => 'Zume Resource', /* This is the Title of the Group */
+                    'singular_name' => 'Zume Resource', /* This is the individual type */
+                    'all_items' => 'All Zume Resources', /* the all items menu item */
                     'add_new' => 'Add New', /* The add new menu item */
-                    'add_new_item' => 'Add New Zume QR Link', /* Add New Display Title */
+                    'add_new_item' => 'Add New Zume Resource', /* Add New Display Title */
                     'edit' => 'Edit', /* Edit Dialog */
-                    'edit_item' => 'Edit Zume QR Link', /* Edit Display Title */
-                    'new_item' => 'New Zume QR Link', /* New Display Title */
-                    'view_item' => 'View Zume QR Link', /* View Display Title */
-                    'search_items' => 'Search Zume QR Links', /* Search Custom Type Title */
+                    'edit_item' => 'Edit Zume Resource', /* Edit Display Title */
+                    'new_item' => 'New Zume Resource', /* New Display Title */
+                    'view_item' => 'View Zume Resource', /* View Display Title */
+                    'search_items' => 'Search Zume Resources', /* Search Custom Type Title */
                     'not_found' => 'Nothing found in the Database.', /* This displays if there are no entries yet */
                     'not_found_in_trash' => 'Nothing found in Trash', /* This displays if there is nothing in the trash */
                     'parent_item_colon' => ''
@@ -243,8 +243,8 @@ class Zume_QR_Post_Type
                 $this->singular,
                 strtolower( $this->singular )
             ),
-            2  => 'Zume QR Link updated.',
-            3  => 'Zume QR Link deleted.',
+            2  => 'Zume Resource updated.',
+            3  => 'Zume Resource deleted.',
             4  => sprintf( '%s updated.', $this->singular ),
             /* translators: %s: date and time of the revision */
             5  => isset( $_GET['revision'] ) ? sprintf( '%1$s restored to revision from %2$s', $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
@@ -274,7 +274,7 @@ class Zume_QR_Post_Type
      * @return void
      */
     public function meta_box_setup() {
-        add_meta_box( $this->post_type . '_scribes', 'QR Links', array( $this, 'load_downloads_meta_box' ), $this->post_type, 'normal', 'high' );
+//        add_meta_box( $this->post_type . '_scribes', 'QR Links', array( $this, 'load_downloads_meta_box' ), $this->post_type, 'normal', 'high' );
 //        add_meta_box( $this->post_type . '_pages', 'Pages QR Link Assets', array( $this, 'load_pages_downloads_meta_box' ), $this->post_type, 'normal', 'high' );
         add_meta_box( $this->post_type . '_links', 'Links', array( $this, 'load_links_meta_box' ), $this->post_type, 'normal', 'high' );
     } // End meta_box_setup()
@@ -285,13 +285,13 @@ class Zume_QR_Post_Type
      * @access public
      * @since  0.1.0
      */
-    public function load_downloads_meta_box() {
-        echo 'These QR links support the training content. The links<hr>';
-        $this->meta_box_content( 'downloads' ); // prints
-    }
-    public function load_pages_downloads_meta_box() {
-        $this->meta_box_content( 'pages' ); // prints
-    }
+//    public function load_downloads_meta_box() {
+//        echo 'These QR links support the training content. The links<hr>';
+//        $this->meta_box_content( 'downloads' ); // prints
+//    }
+//    public function load_pages_downloads_meta_box() {
+//        $this->meta_box_content( 'pages' ); // prints
+//    }
 
     /**
      * Meta box for Status Information
@@ -300,7 +300,7 @@ class Zume_QR_Post_Type
      * @since  0.1.0
      */
     public function load_links_meta_box() {
-        $this->meta_box_content( 'links' ); // prints
+        $this->meta_box_content( 'resource' ); // prints
     }
 
     /**
@@ -344,15 +344,15 @@ class Zume_QR_Post_Type
                             echo '</td><tr/>' . "\n";
                             break;
                         case 'link':
-                            $link = zume_mirror_url() . esc_attr( get_the_title( $post_id ) ) . '/' . esc_attr( $data );
-                            $redirect = 'https://zume.training/zume_app/qr?l='.esc_attr( get_the_title( $post_id ) ).'&d='.$k;
+//                            $link = zume_mirror_url() . esc_attr( get_the_title( $post_id ) ) . '/' . esc_attr( $data );
+                            $redirect = 'https://zume.training/zume_app/qr?l='.esc_attr( get_the_title( $post_id ) ).'&r='.$k;
                             echo '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . esc_html( $v['name'] ) . '</label></th>
                                 <td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /><br><br>';
                             echo 'Redirect: <a href="'. $redirect .'" target="_blank">'. $redirect .'</a><br>';
                             if ( ! empty( $redirect )) {
                                 echo '<a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.$redirect.'"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.$redirect.'" style="width:250px;"/></a><br><br>';
                             }
-                            echo 'Destination: <a href="'. $link .'" target="_blank">'. $link .'</a><br>';
+//                            echo 'Destination: <a href="'. $link .'" target="_blank">'. $link .'</a><br>';
                             echo '</td><tr/>' . "\n";
                             break;
                         case 'rawlink':
@@ -484,14 +484,249 @@ class Zume_QR_Post_Type
     public function get_custom_fields_settings() {
         $fields = array();
 
+        $url = 'https://zume.training/';
+
         // Project Update Information Section
-        $fields['33'] = array(
-            'name'        => '(33) Zúme Guidebook ',
+        $fields['1'] = array(
+            'name'        => '(1) Welcome to Zume',
             'description' => '',
             'type'        => 'link',
-            'default'     => '33_en_zume_guidebook.pdf',
-            'section'     => 'downloads',
+            'default'     => $url,
+            'section'     => 'resource',
         );
+        $fields['2'] = array(
+            'name'        => '(2) Teach them to Obey',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['3'] = array(
+            'name'        => '(3) Spiritual Breathing',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['4'] = array(
+            'name'        => '(4) S.O.A.P.S.',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['5'] = array(
+            'name'        => '(5) Accountability Groups',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['6'] = array(
+            'name'        => '(6) Producers vs Consumers',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['7'] = array(
+            'name'        => '(7) Prayer Cycle',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['8'] = array(
+            'name'        => '(8) List of 100',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['9'] = array(
+            'name'        => '(9) Spiritual Economy',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['10'] = array(
+            'name'        => '(10) The Gospel',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['11'] = array(
+            'name'        => '(11) Baptism',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['12'] = array(
+            'name'        => '(12) 3 Minute Testimony',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['13'] = array(
+            'name'        => '(13) Greatest Blessing',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['14'] = array(
+            'name'        => '(14) Duckling Discipleship',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['15'] = array(
+            'name'        => '(15) Eyes to See',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['16'] = array(
+            'name'        => "(16) Lord's Supper",
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['17'] = array(
+            'name'        => '(17) Prayer Walking',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['18'] = array(
+            'name'        => '(18) Person of Peace',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['19'] = array(
+            'name'        => '(19) Faithfulness',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['20'] = array(
+            'name'        => '(20) 3|3 Groups',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['21'] = array(
+            'name'        => '(21) 3|3 Group Live',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['22'] = array(
+            'name'        => '(22) Training Cycle',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['23'] = array(
+            'name'        => '(23) Leadership Cells',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['24'] = array(
+            'name'        => '(24) Non-Sequential',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['25'] = array(
+            'name'        => '(25) Pace',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['26'] = array(
+            'name'        => '(26) Part of Two Churches',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['27'] = array(
+            'name'        => '(27) Completion of Training',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['28'] = array(
+            'name'        => '(28) Coaching Checklist',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['29'] = array(
+            'name'        => '(29) Leadership in Networks',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['30'] = array(
+            'name'        => '(30) Peer Mentoring',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['31'] = array(
+            'name'        => '(31) Overview',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['32'] = array(
+            'name'        => '(32) How Zume Works',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+
+        $fields['68'] = array(
+            'name'        => '(68) Four Relationships',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+        $fields['69'] = array(
+            'name'        => '(69) 3-Circles',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'resource',
+        );
+
 
 
 

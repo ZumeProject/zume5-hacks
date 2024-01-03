@@ -15,5 +15,7 @@
  * Domain Path:       /languages
  */
 require_once( 'qr-redirect.php' );
-require_once( 'qr-post-type.php' );
+require_once( 'resources-post-type.php' );
+require_once( 'download-post-type.php' );
+require_once( 'video-post-type.php' );
 

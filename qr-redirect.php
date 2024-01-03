@@ -115,6 +115,64 @@ class Zume_QR_Redirect
 
             exit();
         }
+        else if ( isset( $_GET['l'], $_GET['r'] ) ) {
+            dt_write_log( 'Resource: ' . $_GET['l'] . ' ' . $_GET['r'] );
+
+            $resource_id = $_GET['r'];
+            $language_slug = $_GET['l'];
+
+            $list = $wpdb->get_results( $wpdb->prepare( "
+                    SELECT pm.meta_key, pm.meta_value
+                    FROM wp_posts p
+                    JOIN wp_postmeta pm ON pm.post_id=p.ID
+                    WHERE p.post_title = %s
+                      AND p.post_type = 'zume_resource'
+                      AND pm.meta_key != '_edit_last'
+                      AND pm.meta_key != '_edit_lock';
+                ", $language_slug ), ARRAY_A );
+
+            if ( empty( $list ) ) {
+                echo 'No resource found for language code: ' . $language_slug;
+                $this->instructions();
+            }
+
+            $link = $list[0]['meta_value'];
+
+            echo 'Resource: ' . $link ;
+            dt_write_log( 'Resource: ' . $link );
+//            header("Location: ".$link, true, 302);
+
+            exit();
+        }
+        else if ( isset( $_GET['l'], $_GET['v'] ) ) {
+            dt_write_log( 'Video Language: ' . $_GET['l'] . ' ' . $_GET['v'] );
+
+            $link = $this->mirror_url;
+
+            $video_id = $_GET['v'];
+            $language_slug = $_GET['l'];
+
+            $list = $wpdb->get_results( $wpdb->prepare( "
+                    SELECT pm.meta_key, pm.meta_value
+                    FROM wp_posts p
+                    JOIN wp_postmeta pm ON pm.post_id=p.ID
+                    WHERE p.post_title = %s
+                      AND p.post_type = 'zume_download'
+                      AND pm.meta_key != '_edit_last'
+                      AND pm.meta_key != '_edit_lock';
+                ", $language_slug ), ARRAY_A );
+
+            if ( empty( $list ) ) {
+                echo 'No download found for language code: ' . $language_slug;
+                $this->instructions();
+            }
+
+            $link = $link . $language_slug . '/' . $list[0]['meta_value'];
+
+            header("Location: ".$link, true, 302);
+
+            exit();
+        }
         /**
          * Redirect by Video ID
          */
