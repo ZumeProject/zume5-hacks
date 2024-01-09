@@ -81,10 +81,10 @@ class Zume_QR_Redirect
 
         }
         /**
-         * Redirect by Resource ID and Language code
+         * Redirect by Language code and Download ID
          *
-         * https://zume.vision/zume_app/qr/?r=123&l=en
-         * Returns the permalink url with the language for the post page.
+         * https://zume.training/zume_app/qr/?l=en&d=123
+         * Returns the download link according to the language code and download id.
          */
         else if ( isset( $_GET['l'], $_GET['d'] ) ) {
             dt_write_log( 'QR Redirect: ' . $_GET['d'] . ' ' . $_GET['l'] );
@@ -115,6 +115,11 @@ class Zume_QR_Redirect
 
             exit();
         }
+        /**
+         * Language Code and Resource ID
+         *
+         * https://zume.training/zume_app/qr/?l=en&r=123
+         */
         else if ( isset( $_GET['l'], $_GET['r'] ) ) {
             dt_write_log( 'Resource: ' . $_GET['l'] . ' ' . $_GET['r'] );
 
@@ -217,6 +222,7 @@ class Zume_QR_Redirect
 
     Examples:
     <ul>
+        <li>Redirect by Language Code and  : <a href="' . $this->root_url . 'zume_app/qr/?p=20740">' . $this->root_url . 'zume_app/qr/?p=20740</a></li>
         <li>Redirect by POST ID : <a href="' . $this->root_url . 'zume_app/qr/?p=20740">' . $this->root_url . 'zume_app/qr/?p=20740</a></li>
         <li>Redirect by Language Code & Download ID: <a href="' . $this->root_url . 'zume_app/qr/?l=en&d=33">' . $this->root_url . 'zume_app/qr/?l=en&d=33</a></li>
         <li>Redirect by Video ID : <a href="' . $this->root_url . 'zume_app/qr?v=247062938">' . $this->root_url . 'zume_app/qr?v=247062938</a></li>

@@ -1,95 +1,25 @@
 <?php
 if ( !defined( 'ABSPATH' ) ) {
     exit;
-} // Exit if accessed directly.
+}
 
-/**
- * Zume_Video_Post_Type Post Type Class
- * All functionality pertaining to project update post types in Zume_Video_Post_Type.
- *
- * @package  Disciple_Tools
- * @since    0.1.0
- */
 class Zume_Video_Post_Type
 {
-    /**
-     * The post type token.
-     *
-     * @access public
-     * @since  0.1.0
-     * @var    string
-     */
+
     public $post_type;
-
-    /**
-     * The post type singular label.
-     *
-     * @access public
-     * @since  0.1.0
-     * @var    string
-     */
     public $singular;
-
-    /**
-     * The post type plural label.
-     *
-     * @access public
-     * @since  0.1.0
-     * @var    string
-     */
     public $plural;
-
-    /**
-     * The post type args.
-     *
-     * @access public
-     * @since  0.1.0
-     * @var    array
-     */
     public $args;
-
-    /**
-     * The taxonomies for this post type.
-     *
-     * @access public
-     * @since  0.1.0
-     * @var    array
-     */
     public $taxonomies;
-
-    /**
-     * Zume_Video_Post_Type The single instance of Zume_Video_Post_Type.
-     * @var     object
-     * @access  private
-     * @since   0.1
-     */
     private static $_instance = null;
 
-    /**
-     * Main Zume_Video_Post_Type Instance
-     *
-     * Ensures only one instance of Zume_Video_Post_Type is loaded or can be loaded.
-     *
-     * @since 0.1
-     * @static
-     * @return Zume_Video_Post_Type instance
-     */
     public static function instance() {
         if ( is_null( self::$_instance ) ) {
             self::$_instance = new self();
         }
         return self::$_instance;
-    } // End instance()
+    }
 
-    /**
-     * Disciple_Tools_Prayer_Post_Type constructor.
-     *
-     * @param string $post_type
-     * @param string $singular
-     * @param string $plural
-     * @param array  $args
-     * @param array  $taxonomies
-     */
     public function __construct( $post_type = 'zume_video', $singular = 'Video', $plural = 'Videos', $args = array(), $taxonomies = array() ) {
         $this->post_type = $post_type;
         $this->singular = $singular;
@@ -115,90 +45,46 @@ class Zume_Video_Post_Type
                 }
             }
         }
-    } // End __construct()
+    }
 
-    /**
-     * Register the post type.
-     *
-     * @access public
-     * @return void
-     */
     public function register_post_type() {
-        register_post_type( $this->post_type, /* (http://codex.wordpress.org/Function_Reference/register_post_type) */
-            // let's now add all the options for this post type
+        register_post_type( $this->post_type,
             array(
             'labels' => array(
-                'name' => 'Zume Video', /* This is the Title of the Group */
-                'singular_name' => 'Zume Video', /* This is the individual type */
-                'all_items' => 'All Zume Videos', /* the all items menu item */
-                'add_new' => 'Add New', /* The add new menu item */
-                'add_new_item' => 'Add New Zume Video', /* Add New Display Title */
-                'edit' => 'Edit', /* Edit Dialog */
-                'edit_item' => 'Edit Zume Video', /* Edit Display Title */
-                'new_item' => 'New Zume Video', /* New Display Title */
-                'view_item' => 'View Zume Video', /* View Display Title */
-                'search_items' => 'Search Zume Videos', /* Search Custom Type Title */
-                'not_found' => 'Nothing found in the Database.', /* This displays if there are no entries yet */
-                'not_found_in_trash' => 'Nothing found in Trash', /* This displays if there is nothing in the trash */
+                'name' => 'Zume Video',
+                'singular_name' => 'Zume Video',
+                'all_items' => 'All Zume Videos',
+                'add_new' => 'Add New',
+                'add_new_item' => 'Add New Zume Video',
+                'edit' => 'Edit',
+                'edit_item' => 'Edit Zume Video',
+                'new_item' => 'New Zume Video',
+                'view_item' => 'View Zume Video',
+                'search_items' => 'Search Zume Videos',
+                'not_found' => 'Nothing found in the Database.',
+                'not_found_in_trash' => 'Nothing found in Trash',
                 'parent_item_colon' => ''
             ), /* end of arrays */
-                  'description' => 'Zume video catalog for language videos', /* Custom Type Description */
+                  'description' => 'Zume video catalog for language videos',
                   'public' => false,
                   'publicly_queryable' => false,
                   'exclude_from_search' => true,
                   'show_ui' => true,
                   'query_var' => true,
-                  'menu_position' => 7, /* this is what order you want it to appear in on the left hand side menu */
-                  'menu_icon' => 'dashicons-book', /* the icon for the custom post type menu. uses built-in dashicons (CSS class name) */
+                  'menu_position' => 7,
+                  'menu_icon' => 'dashicons-book',
                   'rewrite' => array(
             'slug' => 'zume_video',
             'with_front' => false
-            ), /* you can specify its url slug */
-                  'has_archive' => 'zume_video', /* you can rename the slug here */
+            ),
+                  'has_archive' => 'zume_video',
                   'capability_type' => 'post',
                   'hierarchical' => false,
-                /* the next one is important, it tells what's enabled in the post editor */
                   'supports' => array( 'title' )
-            ) /* end of options */
-        ); /* end of register post type */
-    } // End register_post_type()
-
-
-    /**
-     * Add custom columns for the "manage" screen of this post type.
-     *
-     * @access public
-     *
-     * @param  string $column_name
-     *
-     * @since  0.1.0
-     * @return void
-     */
-    public function register_custom_columns( $column_name ) {
-//        global $post;
-
-        switch ( $column_name ) {
-            case 'image':
-                break;
-            case 'phone':
-                echo '';
-                break;
-
-            default:
-                break;
-        }
+            )
+        );
     }
-
-    /**
-     * Add custom column headings for the "manage" screen of this post type.
-     *
-     * @access public
-     *
-     * @param  array $defaults
-     *
-     * @since  0.1.0
-     * @return mixed/void
-     */
+    
     public function register_custom_column_headings( $defaults ) {
 
         $new_columns = array(); //array( 'image' => __( 'Image', 'zume' ));
@@ -220,17 +106,8 @@ class Zume_Video_Post_Type
         }
 
         return $defaults;
-    } // End register_custom_column_headings()
+    }
 
-    /**
-     * Update messages for the post type admin.
-     *
-     * @since  0.1.0
-     *
-     * @param  array $messages Array of messages for all post types.
-     *
-     * @return array           Modified array.
-     */
     public function updated_messages( $messages ) {
         global $post;
 
@@ -264,25 +141,11 @@ class Zume_Video_Post_Type
         );
 
         return $messages;
-    } // End updated_messages()
+    }
 
-    /**
-     * Setup the meta box.
-     *
-     * @access public
-     * @since  0.1.0
-     * @return void
-     */
     public function meta_box_setup() {
         add_meta_box( $this->post_type . '_scribes', 'Video Scribes', array( $this, 'load_video_meta_box' ), $this->post_type, 'normal', 'high' );
-    } // End meta_box_setup()
-
-    /**
-     * Meta box for Status Information
-     *
-     * @access public
-     * @since  0.1.0
-     */
+    }
     public function load_video_meta_box() {
         ?>
         These numeric ids below refer to the unique Vimeo id. It should work with the url "https://player.vimeo.com/video/{put_video_id_here}". Use the "verify link" to check if the video loads correctly.<br>The page title above needs to be the two character language code.<br><br>
@@ -303,8 +166,6 @@ class Zume_Video_Post_Type
         </style>
         <script>
             function show_hide_qr() {
-                //let qr_raw_link = '<?php //echo get_stylesheet_directory_uri() . '/video.php?id='; ?>//'
-                //let qr_link = '<?php //echo urlencode( get_stylesheet_directory_uri() . '/video.php?id=' ); ?>//'
                 let qr_link = 'https://zume.training/zume_app/qr?v='
                 let button = jQuery('#show-hide-qr')
                 let state = button.data('state')
@@ -352,22 +213,11 @@ class Zume_Video_Post_Type
         <?php
     }
 
-    /**
-     * Meta box for Status Information
-     *
-     * @access public
-     * @since  0.1.0
-     */
     public function load_alt_video_meta_box() {
         echo 'These boxes include full URLs. <br>';
         $this->meta_box_content( 'alt_video' ); // prints
     }
 
-    /**
-     * The contents of our meta box.
-     *
-     * @param string $section
-     */
     public function meta_box_content( $section = 'scribe' ) {
         global $post_id;
         $fields = get_post_custom( $post_id );
@@ -461,99 +311,8 @@ class Zume_Video_Post_Type
             echo '</tbody>' . "\n";
             echo '</table>' . "\n";
         }
-    } // End meta_box_content()
+    }
 
-    /**
-     * Save meta box fields.
-     *
-     * @access public
-     * @since  0.1.0
-     *
-     * @param  int $post_id
-     *
-     * @return int $post_id
-     */
-    public function meta_box_save( $post_id ) {
-
-        // Verify
-        if ( get_post_type() != $this->post_type ) {
-            return $post_id;
-        }
-
-        $key = $this->post_type . '_noonce';
-        if ( isset( $_POST[ $key ] ) && !wp_verify_nonce( sanitize_key( $_POST[ $key ] ), 'video_noonce_action' ) ) {
-            return $post_id;
-        }
-
-        if ( isset( $_POST['post_type'] ) && 'page' == sanitize_text_field( wp_unslash( $_POST['post_type'] ) ) ) {
-            if ( !current_user_can( 'edit_page', $post_id ) ) {
-                return $post_id;
-            }
-        } else {
-            if ( !current_user_can( 'edit_post', $post_id ) ) {
-                return $post_id;
-            }
-        }
-
-        if ( isset( $_GET['action'] ) ) {
-            if ( $_GET['action'] == 'trash' || $_GET['action'] == 'untrash' || $_GET['action'] == 'delete' ) {
-                return $post_id;
-            }
-        }
-
-        $field_data = $this->get_custom_fields_settings();
-        $fields = array_keys( $field_data );
-
-        foreach ( $fields as $f ) {
-            if ( !isset( $_POST[ $f ] ) ) {
-                continue;
-            }
-
-            ${$f} = strip_tags( trim( sanitize_text_field( wp_unslash( $_POST[ $f ] ) ) ) );
-
-            // Escape the URLs.
-            if ( 'url' == $field_data[ $f ]['type'] ) {
-                ${$f} = esc_url( ${$f} );
-            }
-
-            if ( get_post_meta( $post_id, $f ) == '' ) {
-                add_post_meta( $post_id, $f, ${$f}, true );
-            } elseif ( ${$f} != get_post_meta( $post_id, $f, true ) ) {
-                update_post_meta( $post_id, $f, ${$f} );
-            } elseif ( ${$f} == '' ) {
-                delete_post_meta( $post_id, $f, get_post_meta( $post_id, $f, true ) );
-            }
-        }
-        return $post_id;
-    } // End meta_box_save()
-
-
-
-    /**
-     * Customise the "Enter title here" text.
-     *
-     * @access public
-     * @since  0.1.0
-     *
-     * @param  string $title
-     *
-     * @return string
-     */
-    public function enter_title_here( $title ) {
-        if ( get_post_type() == $this->post_type ) {
-            $title = 'Enter the title here';
-        }
-
-        return $title;
-    } // End enter_title_here()
-
-    /**
-     * Get the settings for the custom fields.
-     *
-     * @access public
-     * @since  0.1.0
-     * @return array
-     */
     public function get_custom_fields_settings() {
         $fields = array();
 
@@ -798,28 +557,79 @@ class Zume_Video_Post_Type
         );
 
         return apply_filters( 'zume_video_fields_settings', $fields );
-    } // End get_custom_fields_settings()
+    }
+    public function meta_box_save( $post_id ) {
 
-    /**
-     * Run on activation.
-     *
-     * @access public
-     * @since  0.1.0
-     */
+        // Verify
+        if ( get_post_type() != $this->post_type ) {
+            return $post_id;
+        }
+
+        $key = $this->post_type . '_noonce';
+        if ( isset( $_POST[ $key ] ) && !wp_verify_nonce( sanitize_key( $_POST[ $key ] ), 'video_noonce_action' ) ) {
+            return $post_id;
+        }
+
+        if ( isset( $_POST['post_type'] ) && 'page' == sanitize_text_field( wp_unslash( $_POST['post_type'] ) ) ) {
+            if ( !current_user_can( 'edit_page', $post_id ) ) {
+                return $post_id;
+            }
+        } else {
+            if ( !current_user_can( 'edit_post', $post_id ) ) {
+                return $post_id;
+            }
+        }
+
+        if ( isset( $_GET['action'] ) ) {
+            if ( $_GET['action'] == 'trash' || $_GET['action'] == 'untrash' || $_GET['action'] == 'delete' ) {
+                return $post_id;
+            }
+        }
+
+        $field_data = $this->get_custom_fields_settings();
+        $fields = array_keys( $field_data );
+
+        foreach ( $fields as $f ) {
+            if ( !isset( $_POST[ $f ] ) ) {
+                continue;
+            }
+
+            ${$f} = strip_tags( trim( sanitize_text_field( wp_unslash( $_POST[ $f ] ) ) ) );
+
+            // Escape the URLs.
+            if ( 'url' == $field_data[ $f ]['type'] ) {
+                ${$f} = esc_url( ${$f} );
+            }
+
+            if ( get_post_meta( $post_id, $f ) == '' ) {
+                add_post_meta( $post_id, $f, ${$f}, true );
+            } elseif ( ${$f} != get_post_meta( $post_id, $f, true ) ) {
+                update_post_meta( $post_id, $f, ${$f} );
+            } elseif ( ${$f} == '' ) {
+                delete_post_meta( $post_id, $f, get_post_meta( $post_id, $f, true ) );
+            }
+        }
+        return $post_id;
+    }
+    public function register_custom_columns( $column_name ) {
+        switch ( $column_name ) {
+            default:
+                break;
+        }
+    }
+    public function enter_title_here( $title ) {
+        if ( get_post_type() == $this->post_type ) {
+            $title = 'Enter the title here';
+        }
+        return $title;
+    }
     public function activation() {
         $this->flush_rewrite_rules();
-    } // End activation()
-
-    /**
-     * Flush the rewrite rules
-     *
-     * @access public
-     * @since  0.1.0
-     */
+    }
     private function flush_rewrite_rules() {
         $this->register_post_type();
         flush_rewrite_rules();
-    } // End flush_rewrite_rules()
+    }
 
-} // End Class
+}
 Zume_Video_Post_Type::instance();
