@@ -260,7 +260,7 @@ class Zume_Tools_Post_Type
                             echo '</td><tr/>' . "\n";
                             break;
                         case 'link':
-                            $redirect = 'https://zume.training/zume_app/qr?l='.esc_attr( get_the_title( $post_id ) ).'&r='.$k;
+                            $redirect = 'https://zume.training/zume_app/qr/?l='.esc_attr( get_the_title( $post_id ) ).'&t='.$k;
                             echo '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . esc_html( $v['name'] ) . '</label></th>
                                 <td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /><br><br>';
                             echo 'Redirect: <a href="'. $redirect .'" target="_blank">'. $redirect .'</a><br>';

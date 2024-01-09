@@ -84,7 +84,7 @@ class Zume_Video_Post_Type
             )
         );
     }
-    
+
     public function register_custom_column_headings( $defaults ) {
 
         $new_columns = array(); //array( 'image' => __( 'Image', 'zume' ));

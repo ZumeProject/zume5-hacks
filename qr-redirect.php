@@ -17,6 +17,7 @@ class Zume_QR_Redirect
     public $url_token = 'zume_app/qr';
     public $type_name = 'Zume Redirect';
     public $post_type = 'contacts';
+    public $site_url = '';
 
     private static $_instance = null;
     public static function instance() {
@@ -24,9 +25,10 @@ class Zume_QR_Redirect
             self::$_instance = new self();
         }
         return self::$_instance;
-    } // End instance()
+    }
 
     public function __construct() {
+        $this->root_url = trailingslashit( site_url() );
         $url = dt_get_url_path();
 
         // fail except for exact url match
@@ -54,12 +56,14 @@ class Zume_QR_Redirect
         $link = $this->root_url;
 
         /**
-         * Redirect by Post ID
+         * By Post ID
          *
-         * https://zume.vision/zume_app/qr/?p=123
+         * https://zume.training/zume_app/qr/?p=20740
          * Returns the permalink url with the language for the post page.
          */
         if ( isset( $_GET['p'] ) ) {
+            dt_write_log( 'Post: ' . $_GET['p'] );
+
             $post_id = $_GET['p'];
 
             $language_slug = $wpdb->get_var( $wpdb->prepare( "
@@ -75,18 +79,77 @@ class Zume_QR_Redirect
                 WHERE p.ID = %d
             ", $post_id ) );
 
-            $link = $link . '/' . $language_slug . '/' . $post_name;
+            $link = $link . $language_slug . '/' . $post_name;
 
             header("Location: ".$link, true, 302);
 
+            exit();
         }
         /**
-         * Redirect by Language code and Download ID
+         * By Video ID
          *
-         * https://zume.training/zume_app/qr/?l=en&d=123
+         * https://zume.training/zume_app/qr/?v=247062938
+         */
+        else if( isset( $_GET['v'] ) && !isset( $_GET['l'] ) ) {
+            dt_write_log( 'Video: ' . $_GET['v'] );
+
+            $link = site_url() . '/zume_app/video/?id='; // @todo: change to zume from zume5
+            $video_id = $_GET['v'];
+
+            $link = $link . $video_id;
+
+            header("Location: ".$link, true, 302);
+
+            exit();
+        }
+        /**
+         * By Language code and Video ID
+         *
+         * https://zume.training/zume_app/qr/?l=en&v=33
+         */
+        else if ( isset( $_GET['l'], $_GET['v'] ) ) {
+            dt_write_log( 'Video Language: ' . $_GET['l'] . ' ' . $_GET['v'] );
+
+            $video_id = $_GET['v'];
+            $language_slug = $_GET['l'];
+
+            $list = $wpdb->get_results( $wpdb->prepare( "
+                    SELECT pm.meta_key, pm.meta_value
+                    FROM wp_posts p
+                    JOIN wp_postmeta pm ON pm.post_id=p.ID
+                    WHERE p.post_title = %s
+                      AND p.post_type = 'zume_video'
+                      AND pm.meta_key != '_edit_last'
+                      AND pm.meta_key != '_edit_lock';
+                ", $language_slug ), ARRAY_A );
+
+            if ( empty( $list ) ) {
+                echo 'No video found for language code: ' . $language_slug;
+                $this->instructions();
+            }
+
+            foreach( $list as $item ) {
+                if ( $item['meta_key'] === $video_id ) {
+                    $link = $item['meta_value'];
+                }
+            }
+
+//            $link = $link . $language_slug . '/' . $list[0]['meta_value'];
+
+//            header("Location: ".$link, true, 302);
+
+            echo $link;
+            dt_write_log( 'Resource: ' . $link );
+
+            exit();
+        }
+        /**
+         * By Language code and Download ID
+         *
+         * https://zume.training/zume_app/qr/?l=en&d=33
          * Returns the download link according to the language code and download id.
          */
-        else if ( isset( $_GET['l'], $_GET['d'] ) ) {
+        else if( isset( $_GET['l'], $_GET['d'] ) ) {
             dt_write_log( 'QR Redirect: ' . $_GET['d'] . ' ' . $_GET['l'] );
 
             $link = $this->mirror_url;
@@ -111,19 +174,21 @@ class Zume_QR_Redirect
 
             $link = $link . $language_slug . '/' . $list[0]['meta_value'];
 
-            header("Location: ".$link, true, 302);
+            // header("Location: ".$link, true, 302);
+            echo $link;
+            dt_write_log( 'Resource: ' . $link );
 
             exit();
         }
         /**
-         * Language Code and Resource ID
+         * By Language Code and Resource ID
          *
          * https://zume.training/zume_app/qr/?l=en&r=123
          */
-        else if ( isset( $_GET['l'], $_GET['r'] ) ) {
-            dt_write_log( 'Resource: ' . $_GET['l'] . ' ' . $_GET['r'] );
+        else if ( isset( $_GET['l'], $_GET['t'] ) ) {
+            dt_write_log( 'Resource: ' . $_GET['l'] . ' ' . $_GET['t'] );
 
-            $resource_id = $_GET['r'];
+            $tool_id = $_GET['t'];
             $language_slug = $_GET['l'];
 
             $list = $wpdb->get_results( $wpdb->prepare( "
@@ -131,64 +196,31 @@ class Zume_QR_Redirect
                     FROM wp_posts p
                     JOIN wp_postmeta pm ON pm.post_id=p.ID
                     WHERE p.post_title = %s
-                      AND p.post_type = 'zume_resource'
+                      AND p.post_type = 'zume_tools'
                       AND pm.meta_key != '_edit_last'
                       AND pm.meta_key != '_edit_lock';
                 ", $language_slug ), ARRAY_A );
 
             if ( empty( $list ) ) {
-                echo 'No resource found for language code: ' . $language_slug;
+                echo 'No tool found for language code: ' . $language_slug;
                 $this->instructions();
             }
 
-            $link = $list[0]['meta_value'];
+            foreach( $list as $item ) {
+                if ( $item['meta_key'] === $tool_id ) {
+                    $link = $item['meta_value'];
+                }
+            }
 
-            echo 'Resource: ' . $link ;
-            dt_write_log( 'Resource: ' . $link );
 //            header("Location: ".$link, true, 302);
-
-            exit();
-        }
-        else if ( isset( $_GET['l'], $_GET['v'] ) ) {
-            dt_write_log( 'Video Language: ' . $_GET['l'] . ' ' . $_GET['v'] );
-
-            $link = $this->mirror_url;
-
-            $video_id = $_GET['v'];
-            $language_slug = $_GET['l'];
-
-            $list = $wpdb->get_results( $wpdb->prepare( "
-                    SELECT pm.meta_key, pm.meta_value
-                    FROM wp_posts p
-                    JOIN wp_postmeta pm ON pm.post_id=p.ID
-                    WHERE p.post_title = %s
-                      AND p.post_type = 'zume_download'
-                      AND pm.meta_key != '_edit_last'
-                      AND pm.meta_key != '_edit_lock';
-                ", $language_slug ), ARRAY_A );
-
-            if ( empty( $list ) ) {
-                echo 'No download found for language code: ' . $language_slug;
-                $this->instructions();
-            }
-
-            $link = $link . $language_slug . '/' . $list[0]['meta_value'];
-
-            header("Location: ".$link, true, 302);
+            echo $link;
+            dt_write_log( 'Resource: ' . $link );
 
             exit();
         }
         /**
-         * Redirect by Video ID
+         * Blank match
          */
-        else if  ( isset( $_GET['v'] ) ) {
-            $link = 'https://zume .training/zume_app/video/?id='; // @todo: change to zume from zume5
-            $video_id = $_GET['v'];
-
-            $link = $link . $video_id;
-
-            header("Location: ".$link, true, 302);
-        }
         else {
             echo 'URL param not recognized.';
             $this->instructions();
@@ -207,7 +239,6 @@ class Zume_QR_Redirect
 
         $link = $this->root_url . $url;
 
-
         echo '<div style="width:1000px;"><a href="' . $link . '"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=' . $link . '" title="' . $link . '" alt="' . $link . '" style="width:100%;"/></a><br>' . $link . '</div>';
 
         exit();
@@ -217,15 +248,18 @@ class Zume_QR_Redirect
         echo '
 <div>
     <h1>QR Redirect <System></System></h1>
-    <p>Use this page to redirect to a page on the Zume Training System.</p>
-    <p>Use the following URL parameters to redirect to a page.</p>
+    <p>Use this page to redirect to a page on the Zume Training System. Use the following URL parameters to redirect to a page.</p>
 
-    Examples:
+    <strong>Main redirect examples:</strong>
     <ul>
-        <li>Redirect by Language Code and  : <a href="' . $this->root_url . 'zume_app/qr/?p=20740">' . $this->root_url . 'zume_app/qr/?p=20740</a></li>
-        <li>Redirect by POST ID : <a href="' . $this->root_url . 'zume_app/qr/?p=20740">' . $this->root_url . 'zume_app/qr/?p=20740</a></li>
+        <li>Redirect by Language Code & Video ID: <a href="' . $this->root_url . 'zume_app/qr/?l=en&v=33">' . $this->root_url . 'zume_app/qr/?l=en&v=33</a></li>
         <li>Redirect by Language Code & Download ID: <a href="' . $this->root_url . 'zume_app/qr/?l=en&d=33">' . $this->root_url . 'zume_app/qr/?l=en&d=33</a></li>
-        <li>Redirect by Video ID : <a href="' . $this->root_url . 'zume_app/qr?v=247062938">' . $this->root_url . 'zume_app/qr?v=247062938</a></li>
+        <li>Redirect by Language Code & Tool ID: <a href="' . $this->root_url . 'zume_app/qr/?l=en&t=4">' . $this->root_url . 'zume_app/qr/?l=en&t=4</a></li>
+    </ul>
+    <strong>Direct link examples (deprecated, do not use)</strong>
+    <ul>
+        <li>Redirect by POST ID : <a href="' . $this->root_url . 'zume_app/qr/?p=20740">' . $this->root_url . 'zume_app/qr/?p=20740</a></li>
+        <li>Redirect by Video ID : <a href="' . $this->root_url . 'zume_app/qr/?v=247062938">' . $this->root_url . 'zume_app/qr/?v=247062938</a></li>
     </ul>
 
 </div>
