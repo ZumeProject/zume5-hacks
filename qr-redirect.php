@@ -64,7 +64,7 @@ class Zume_QR_Redirect
         if ( isset( $_GET['p'] ) ) {
             dt_write_log( 'Post: ' . $_GET['p'] );
 
-            $post_id = $_GET['p'];
+            $post_id = esc_attr( $_GET['p'] );
 
             $language_slug = $wpdb->get_var( $wpdb->prepare( "
                 SELECT t.slug
@@ -82,23 +82,7 @@ class Zume_QR_Redirect
             $link = $link . $language_slug . '/' . $post_name;
 
             header("Location: ".$link, true, 302);
-
-            exit();
-        }
-        /**
-         * By Video ID
-         *
-         * https://zume.training/zume_app/qr/?v=247062938
-         */
-        else if( isset( $_GET['v'] ) && !isset( $_GET['l'] ) ) {
-            dt_write_log( 'Video: ' . $_GET['v'] );
-
-            $link = site_url() . '/zume_app/video/?id='; // @todo: change to zume from zume5
-            $video_id = $_GET['v'];
-
-            $link = $link . $video_id;
-
-            header("Location: ".$link, true, 302);
+            dt_write_log( 'Resource: ' . $link ); echo $link;
 
             exit();
         }
@@ -110,8 +94,8 @@ class Zume_QR_Redirect
         else if ( isset( $_GET['l'], $_GET['v'] ) ) {
             dt_write_log( 'Video Language: ' . $_GET['l'] . ' ' . $_GET['v'] );
 
-            $video_id = $_GET['v'];
-            $language_slug = $_GET['l'];
+            $requested_video_id = esc_attr( $_GET['v'] );
+            $language_slug = esc_attr( $_GET['l'] );
 
             $list = $wpdb->get_results( $wpdb->prepare( "
                     SELECT pm.meta_key, pm.meta_value
@@ -129,17 +113,35 @@ class Zume_QR_Redirect
             }
 
             foreach( $list as $item ) {
-                if ( $item['meta_key'] === $video_id ) {
-                    $link = $item['meta_value'];
+                if ( $item['meta_key'] === $requested_video_id ) {
+                    $video_id = $item['meta_value'];
+                    break;
                 }
             }
 
-//            $link = $link . $language_slug . '/' . $list[0]['meta_value'];
+            $link = $this->root_url . 'zume_app/video/?id=' . $video_id;
 
 //            header("Location: ".$link, true, 302);
+            dt_write_log( 'Resource: ' . $link ); echo $link;
 
-            echo $link;
-            dt_write_log( 'Resource: ' . $link );
+            exit();
+        }
+        /**
+         * By Video ID
+         * (legacy support for zume4 books)
+         *
+         * https://zume.training/zume_app/qr/?l=en&v=1
+         */
+        else if( isset( $_GET['v'] ) && !isset( $_GET['l'] ) ) {
+            dt_write_log( 'Video: ' . $_GET['v'] );
+
+            $link = site_url() . '/zume_app/video/?id='; // @todo: change to zume from zume5
+            $video_id = esc_attr( $_GET['v'] );
+
+            $link = $link . $video_id;
+
+//            header("Location: ".$link, true, 302);
+            dt_write_log( 'Resource: ' . $link ); echo $link;
 
             exit();
         }
@@ -152,10 +154,8 @@ class Zume_QR_Redirect
         else if( isset( $_GET['l'], $_GET['d'] ) ) {
             dt_write_log( 'QR Redirect: ' . $_GET['d'] . ' ' . $_GET['l'] );
 
-            $link = $this->mirror_url;
-
-            $download_id = $_GET['d'];
-            $language_slug = $_GET['l'];
+            $requested_download_id = esc_attr( $_GET['d'] );
+            $language_slug = esc_attr( $_GET['l'] );
 
             $list = $wpdb->get_results( $wpdb->prepare( "
                     SELECT pm.meta_key, pm.meta_value
@@ -172,11 +172,17 @@ class Zume_QR_Redirect
                 $this->instructions();
             }
 
-            $link = $link . $language_slug . '/' . $list[0]['meta_value'];
+            foreach( $list as $item ) {
+                if ( $item['meta_key'] === $requested_download_id ) {
+                    $asset_name = $item['meta_value'];
+                    break;
+                }
+            }
+
+            $link = $this->mirror_url . $language_slug . '/' . $asset_name;
 
             // header("Location: ".$link, true, 302);
-            echo $link;
-            dt_write_log( 'Resource: ' . $link );
+            dt_write_log( 'Resource: ' . $link ); echo $link;
 
             exit();
         }
@@ -188,8 +194,8 @@ class Zume_QR_Redirect
         else if ( isset( $_GET['l'], $_GET['t'] ) ) {
             dt_write_log( 'Resource: ' . $_GET['l'] . ' ' . $_GET['t'] );
 
-            $tool_id = $_GET['t'];
-            $language_slug = $_GET['l'];
+            $tool_id = esc_attr( $_GET['t'] );
+            $language_slug = esc_attr( $_GET['l'] );
 
             $list = $wpdb->get_results( $wpdb->prepare( "
                     SELECT pm.meta_key, pm.meta_value
@@ -208,13 +214,15 @@ class Zume_QR_Redirect
 
             foreach( $list as $item ) {
                 if ( $item['meta_key'] === $tool_id ) {
-                    $link = $item['meta_value'];
+                    $params = $item['meta_value'];
+                    break;
                 }
             }
 
+            $link = $this->root_url . $params;
+
 //            header("Location: ".$link, true, 302);
-            echo $link;
-            dt_write_log( 'Resource: ' . $link );
+            dt_write_log( 'Tool: ' . $link ); echo $link;
 
             exit();
         }

@@ -120,14 +120,10 @@ class Zume_Tools_Post_Type
         return $messages;
     }
 
-    public function meta_box_setup() {
-        add_meta_box( $this->post_type . '_links', 'Links', array( $this, 'load_links_meta_box' ), $this->post_type, 'normal', 'high' );
-    }
-
     public function get_custom_fields_settings() {
         $fields = array();
 
-        $url = 'https://zume.training/';
+        $url = '';
 
         // Project Update Information Section
         $fields['4'] = array(
@@ -163,6 +159,7 @@ class Zume_Tools_Post_Type
             'description' => '',
             'type'        => 'link',
             'default'     => $url,
+            'section'     => 'tools',
         );
         $fields['11'] = array(
             'name'        => '(11) Baptism',
@@ -222,11 +219,13 @@ class Zume_Tools_Post_Type
         );
 
 
-        return apply_filters( 'zume_tools_fields_settings', $fields );
+        return $fields;
     }
-
+    public function meta_box_setup() {
+        add_meta_box( $this->post_type . '_links', 'Links', array( $this, 'load_links_meta_box' ), $this->post_type, 'normal', 'high' );
+    }
     public function load_links_meta_box() {
-        $this->meta_box_content(); // prints
+        $this->meta_box_content( 'tools' ); // prints
     }
 
     public function meta_box_content( $section = 'tools' ) {
@@ -262,11 +261,12 @@ class Zume_Tools_Post_Type
                         case 'link':
                             $redirect = 'https://zume.training/zume_app/qr/?l='.esc_attr( get_the_title( $post_id ) ).'&t='.$k;
                             echo '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . esc_html( $v['name'] ) . '</label></th>
-                                <td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /><br><br>';
-                            echo 'Redirect: <a href="'. $redirect .'" target="_blank">'. $redirect .'</a><br>';
+                                <td>'.trailingslashit( site_url() ).'<input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /><br><br>';
                             if ( ! empty( $redirect )) {
                                 echo '<a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.$redirect.'"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.$redirect.'" style="width:250px;"/></a><br><br>';
                             }
+                            echo 'Publishable QR link: <a href="'. $redirect .'" target="_blank">'. $redirect .'</a><br>';
+                            echo 'Redirects to target: <a href="' . $data . '">'.trailingslashit( site_url() ).$data .'</a><br>';
                             echo '</td><tr/>' . "\n";
                             break;
 
