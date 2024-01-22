@@ -18,4 +18,5 @@ require_once( 'qr-redirect.php' );
 require_once( 'tools-post-type.php' );
 require_once( 'download-post-type.php' );
 require_once( 'video-post-type.php' );
+require_once( 'globals.php' );
 
