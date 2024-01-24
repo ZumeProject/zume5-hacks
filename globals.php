@@ -625,6 +625,15 @@ if ( ! function_exists( 'zume_languages' ) ) {
                 'nativeName' => 'English',
                 'rtl' => false,
             ),
+            'am' => array(
+                'name' => 'Amharic',
+                'enDisplayName' => 'Amharic',
+                'code' => 'am',
+                'displayCode' => 'am',
+                'locale' => 'am',
+                'nativeName' => 'አማርኛ',
+                'rtl' => false,
+            ),
             'ar' => array(
                 'name' => 'Arabic',
                 'enDisplayName' => 'Arabic',
