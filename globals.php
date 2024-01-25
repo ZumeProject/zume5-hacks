@@ -8,7 +8,7 @@
 
 if ( ! function_exists( 'zume_get_user_profile' ) ) {
     function zume_get_user_profile( $user_id = null ) {
-        global $wpdb;
+        global $wpdb, $table_prefix;
 
         // return global object if already set and request is for current user
         if ( isset( $zume_user_profile ) && $zume_user_profile['user_id'] == $user_id ) {
@@ -23,7 +23,7 @@ if ( ! function_exists( 'zume_get_user_profile' ) ) {
 
         // validate user_id exists
         if ( $user_id !== $current_user_id ) {
-            $user_row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}users WHERE ID = %d", $user_id ) );
+            $user_row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_prefix}users WHERE ID = %d", $user_id ) );
             if ( empty( $user_row ) ) {
                 return false;
             }
@@ -36,14 +36,14 @@ if ( ! function_exists( 'zume_get_user_profile' ) ) {
         }
 
         // build contact meta array
-        $contact_meta_query = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}postmeta WHERE post_id = %d", $contact_id ), ARRAY_A );
+        $contact_meta_query = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_prefix}postmeta WHERE post_id = %d", $contact_id ), ARRAY_A );
         $contact_meta = [];
         foreach ( $contact_meta_query as $value ) {
             $contact_meta[$value['meta_key']] = $value['meta_value'];
         }
 
         // build user profile elements
-        $name = $wpdb->get_var( $wpdb->prepare( "SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = %d", $contact_id ) );
+        $name = $wpdb->get_var( $wpdb->prepare( "SELECT post_title FROM {$table_prefix}posts WHERE ID = %d", $contact_id ) );
         $has_set_name = !empty( zume_get_user_log( $user_id, 'system', 'set_profile_name' ) );
         $email = $contact_meta['user_email'] ?? '';
         $phone = $contact_meta['user_phone'] ?? '';
@@ -59,15 +59,15 @@ if ( ! function_exists( 'zume_get_user_profile' ) ) {
         $coaches = [];
         $coaching_contact_id = $wpdb->get_var( $wpdb->prepare(
             "SELECT post_id
-                FROM {$wpdb->prefix}3_postmeta
+                FROM {$table_prefix}3_postmeta
                 WHERE meta_key = 'trainee_user_id'
                   AND meta_value = %s",
             $user_id ) );
         $coach_list = $wpdb->get_results( $wpdb->prepare(
             "SELECT p.ID as contact_id, pm.meta_value as user_id, p.post_title as name
-                FROM {$wpdb->prefix}3_p2p p2
-                LEFT JOIN {$wpdb->prefix}3_posts p ON p2.p2p_to=p.ID
-                LEFT JOIN {$wpdb->prefix}3_postmeta pm ON pm.post_id = p.ID AND pm.meta_key = 'corresponds_to_user'
+                FROM {$table_prefix}3_p2p p2
+                LEFT JOIN {$table_prefix}3_posts p ON p2.p2p_to=p.ID
+                LEFT JOIN {$table_prefix}3_postmeta pm ON pm.post_id = p.ID AND pm.meta_key = 'corresponds_to_user'
                 WHERE p2p_from = %d
                   AND p2p_type = 'contacts_to_contacts'",
             $coaching_contact_id ), ARRAY_A );
@@ -225,11 +225,11 @@ if ( ! function_exists( 'zume_get_user_location' ) ) {
         if ( is_null( $user_id ) ) {
             $user_id = get_current_user_id();
         }
-        global $wpdb;
+        global $wpdb, $table_prefix;
         $location = $wpdb->get_row( $wpdb->prepare(
             "SELECT lng, lat, level, label, grid_id, source
-                    FROM {$wpdb->prefix}postmeta pm
-                    JOIN {$wpdb->prefix}dt_location_grid_meta lgm ON pm.post_id=lgm.post_id
+                    FROM {$table_prefix}postmeta pm
+                    JOIN {$table_prefix}dt_location_grid_meta lgm ON pm.post_id=lgm.post_id
                     WHERE pm.meta_key = 'corresponds_to_user' AND pm.meta_value = %d
                     ORDER BY grid_meta_id desc
                     LIMIT 1",
@@ -417,21 +417,21 @@ if ( ! function_exists( 'zume_get_user_friends' ) ) {
         $contact_id = zume_get_user_contact_id( $user_id );
 
         // query user friends
-        global $wpdb;
+        global $wpdb, $table_prefix;
         $from = $wpdb->get_results($wpdb->prepare(
             "SELECT p.post_title as name, p.ID as contact_id, um.user_id
-                FROM {$wpdb->prefix}p2p p2
-                LEFT JOIN {$wpdb->prefix}posts p ON p.ID=p2.p2p_to
-                LEFT JOIN {$wpdb->prefix}usermeta um ON um.meta_value=p.ID AND um.meta_key = 'wp_corresponds_to_contact'
+                FROM {$table_prefix}p2p p2
+                LEFT JOIN {$table_prefix}posts p ON p.ID=p2.p2p_to
+                LEFT JOIN {$table_prefix}usermeta um ON um.meta_value=p.ID AND um.meta_key = '{$table_prefix}corresponds_to_contact'
                 WHERE p2.p2p_type = 'contacts_to_relation'
                 AND p2.p2p_from = %d",
             $contact_id ), ARRAY_A);
 
         $to = $wpdb->get_results($wpdb->prepare(
             "SELECT p.post_title as name, p.ID as contact_id, um.user_id
-                FROM {$wpdb->prefix}p2p p2
-                LEFT JOIN {$wpdb->prefix}posts p ON p.ID=p2.p2p_from
-                LEFT JOIN {$wpdb->prefix}usermeta um ON um.meta_value=p.ID AND um.meta_key = 'wp_corresponds_to_contact'
+                FROM {$table_prefix}p2p p2
+                LEFT JOIN {$table_prefix}posts p ON p.ID=p2.p2p_from
+                LEFT JOIN {$table_prefix}usermeta um ON um.meta_value=p.ID AND um.meta_key = '{$table_prefix}corresponds_to_contact'
                 WHERE p2.p2p_type = 'contacts_to_relation'
                 AND p2.p2p_to = %d",
             $contact_id ), ARRAY_A);
@@ -458,9 +458,9 @@ if ( ! function_exists( 'zume_get_user_commitments' ) ) {
         if ( is_null( $user_id ) ) {
             $user_id = get_current_user_id();
         }
-        global $wpdb;
+        global $wpdb, $table_prefix;;
         $results = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}dt_post_user_meta
+            "SELECT * FROM {$table_prefix}dt_post_user_meta
                     WHERE user_id = %d
                     ORDER BY date DESC",
             $user_id), ARRAY_A);
@@ -504,13 +504,13 @@ if ( ! function_exists( 'zume_get_user_plans' ) ) {
         $log = zume_get_user_log( $user_id );
         $log_subtypes = array_column( $log, 'subtype' );
 
-        global $wpdb;
+        global $wpdb, $table_prefix;
         $contact_id = zume_get_user_contact_id( $user_id );
         $connected_plans = $wpdb->get_results( $wpdb->prepare(
             "SELECT p.ID as post_id, p.post_title as title, pm.meta_key, pm.meta_value
-                    FROM {$wpdb->prefix}p2p p2
-                    LEFT JOIN {$wpdb->prefix}posts p ON p.ID=p2.p2p_to
-                    LEFT JOIN {$wpdb->prefix}postmeta pm ON pm.post_id=p2.p2p_to
+                    FROM {$table_prefix}p2p p2
+                    LEFT JOIN {$table_prefix}posts p ON p.ID=p2.p2p_to
+                    LEFT JOIN {$table_prefix}postmeta pm ON pm.post_id=p2.p2p_to
                     WHERE p2.p2p_type = 'zume_plans_to_contacts'
                     AND p2.p2p_from = %d ",
             $contact_id
@@ -543,9 +543,9 @@ if ( ! function_exists( 'zume_get_user_plans' ) ) {
             $participants_string = implode( ',', $participants );
             $participants_result = $wpdb->get_results(
                 "SELECT  p2.p2p_to as plan_id, p2.p2p_from as contact_id, pm.meta_value as user_id, p.post_title as user_name
-                    FROM {$wpdb->prefix}p2p p2
-            		LEFT JOIN {$wpdb->prefix}posts p ON p.ID=p2.p2p_from
-					LEFT JOIN {$wpdb->prefix}postmeta pm ON p2.p2p_from=pm.post_id AND pm.meta_key = 'corresponds_to_user'
+                    FROM {$table_prefix}p2p p2
+            		LEFT JOIN {$table_prefix}posts p ON p.ID=p2.p2p_from
+					LEFT JOIN {$table_prefix}postmeta pm ON p2.p2p_from=pm.post_id AND pm.meta_key = 'corresponds_to_user'
                     WHERE p2.p2p_type = 'zume_plans_to_contacts'
                     AND p2.p2p_to IN ( $participants_string ) ", ARRAY_A );
 
@@ -566,14 +566,14 @@ if ( ! function_exists( 'zume_get_user_plans' ) ) {
 }
 if ( ! function_exists( 'zume_get_user_contact_id' ) ) {
     function zume_get_user_contact_id( $user_id ) {
-        global $wpdb;
-        return $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = 'corresponds_to_user' AND meta_value = %s", $user_id ) );
+        global $wpdb, $table_prefix;
+        return $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$table_prefix}postmeta WHERE meta_key = 'corresponds_to_user' AND meta_value = %s", $user_id ) );
     }
 }
 if ( ! function_exists( 'zume_get_user_id_by_contact_id' ) ) {
     function zume_get_user_id_by_contact_id( $contact_id ) {
-        global $wpdb;
-        return $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$wpdb->prefix}usermeta WHERE meta_key = '{$wpdb->prefix}corresponds_to_contact' AND meta_value = %s", $contact_id ) );
+        global $wpdb, $table_prefix;
+        return $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$table_prefix}usermeta WHERE meta_key = '{$table_prefix}corresponds_to_contact' AND meta_value = %s", $contact_id ) );
     }
 }
 if ( ! function_exists( 'zume_get_user_log' ) ) {
@@ -586,10 +586,10 @@ if ( ! function_exists( 'zume_get_user_log' ) ) {
      * @param string $subtype
      */
     function zume_get_user_log( $user_id, $type = null, $subtype = null ) {
-        global $wpdb;
+        global $wpdb, $table_prefix;
 
         $sql = $wpdb->prepare( "SELECT CONCAT( r.type, '_', r.subtype ) as log_key, r.*
-            FROM {$wpdb->prefix}dt_reports r
+            FROM {$table_prefix}dt_reports r
             WHERE r.user_id = %s
             AND r.post_type = 'zume'
         ", $user_id );
@@ -4979,6 +4979,7 @@ if ( ! class_exists( 'Zume_Global_Endpoints' ) ) {
             return zume_log_insert( $params['type'], $params['subtype'], [ 'user_id' => $user_id ] );
         }
         public function delete_host( WP_REST_Request $request ) {
+            global $wpdb, $table_prefix;
             if ( ! is_user_logged_in() ) {
                 return new WP_Error( __METHOD__, 'User not logged in', array( 'status' => 401 ) );
             }
@@ -5000,7 +5001,7 @@ if ( ! class_exists( 'Zume_Global_Endpoints' ) ) {
                 'user_id' => $user_id,
             ];
 
-            $delete = $wpdb->delete( $wpdb->prefix.'dt_reports', $fields );
+            $delete = $wpdb->delete( $table_prefix.'dt_reports', $fields );
 
             return $delete;
         }
@@ -5969,7 +5970,7 @@ if ( ! class_exists('Zume_System_Log_API') ) {
 
         public static function insert(array $args, bool $save_hash = true, bool $duplicate_check = true)
         {
-            global $wpdb;
+            global $wpdb, $table_prefix;
             if (!isset($args['type'])) {
                 return false;
             }
@@ -6009,7 +6010,7 @@ if ( ! class_exists('Zume_System_Log_API') ) {
                             "SELECT
                     `id`
                 FROM
-                    {$wpdb->prefix}dt_reports
+                    {$table_prefix}dt_reports
                 WHERE hash = %s AND hash IS NOT NULL;",
                             $args['hash']
                         )
@@ -6027,7 +6028,7 @@ if ( ! class_exists('Zume_System_Log_API') ) {
             }
 
             $wpdb->insert(
-                $wpdb->prefix.'dt_reports',
+                $table_prefix.'dt_reports',
                 [
                     'user_id' => $args['user_id'],
                     'parent_id' => $args['parent_id'],
@@ -6285,25 +6286,25 @@ if ( ! class_exists( 'Zume_User_Genmap' ) ) {
             return $this->get_genmap( $query  );
         }
         public function get_query( $user_id ) {
-            global $wpdb;
+            global $wpdb, $table_prefix;
             $key = 'user-'.$user_id;
             $query = $wpdb->get_results( $wpdb->prepare ( "
                         SELECT
                           a.ID         as id,
                           0            as parent_id,
                           a.post_title as name
-                        FROM {$wpdb->prefix}posts as a
-                        LEFT JOIN {$wpdb->prefix}postmeta pm ON pm.post_id=a.ID AND pm.meta_key = 'assigned_to' AND pm.meta_value = %s
+                        FROM {$table_prefix}posts as a
+                        LEFT JOIN {$table_prefix}postmeta pm ON pm.post_id=a.ID AND pm.meta_key = 'assigned_to' AND pm.meta_value = %s
                         WHERE a.post_type = 'groups'
                         AND a.ID NOT IN (
                           SELECT DISTINCT (p2p_from)
-                          FROM {$wpdb->prefix}p2p
+                          FROM {$table_prefix}p2p
                           WHERE p2p_type = 'groups_to_groups'
                           GROUP BY p2p_from
                         )
                         AND a.ID IN (
                           SELECT DISTINCT (p2p_to)
-                          FROM {$wpdb->prefix}p2p
+                          FROM {$table_prefix}p2p
                           WHERE p2p_type = 'groups_to_groups'
                           GROUP BY p2p_to
                         )
@@ -6312,9 +6313,9 @@ if ( ! class_exists( 'Zume_User_Genmap' ) ) {
                         SELECT
                           p.p2p_from  as id,
                           p.p2p_to    as parent_id,
-                          (SELECT sub.post_title FROM {$wpdb->prefix}posts as sub WHERE sub.ID = p.p2p_from ) as name
-                        FROM {$wpdb->prefix}p2p as p
-                        LEFT JOIN {$wpdb->prefix}postmeta pm2 ON pm2.post_id=p.p2p_from AND pm2.meta_key = 'assigned_to' AND pm2.meta_value = %s
+                          (SELECT sub.post_title FROM {$table_prefix}posts as sub WHERE sub.ID = p.p2p_from ) as name
+                        FROM {$table_prefix}p2p as p
+                        LEFT JOIN {$table_prefix}postmeta pm2 ON pm2.post_id=p.p2p_from AND pm2.meta_key = 'assigned_to' AND pm2.meta_value = %s
                         WHERE p.p2p_type = 'groups_to_groups'
                         AND pm2.meta_value IS NOT NULL;
                     ", $key, $key ), ARRAY_A );
