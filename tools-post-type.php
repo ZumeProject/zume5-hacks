@@ -123,9 +123,30 @@ class Zume_Tools_Post_Type
     public function get_custom_fields_settings() {
         $fields = array();
 
-        $url = '';
+        $url = '#';
 
         // Project Update Information Section
+        $fields['1'] = array(
+            'name'        => '(1) God Uses Ordinary People',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['2'] = array(
+            'name'        => '(2) Teach Them to Obey',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['3'] = array(
+            'name'        => '(3) Spiritual Breathing',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
         $fields['4'] = array(
             'name'        => '(4) S.O.A.P.S.',
             'description' => '',
@@ -140,6 +161,13 @@ class Zume_Tools_Post_Type
             'default'     => $url,
             'section'     => 'tools',
         );
+        $fields['6'] = array(
+            'name'        => '(6) Producer not Consumer',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
         $fields['7'] = array(
             'name'        => '(7) Prayer Cycle',
             'description' => '',
@@ -149,6 +177,13 @@ class Zume_Tools_Post_Type
         );
         $fields['8'] = array(
             'name'        => '(8) List of 100',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['9'] = array(
+            'name'        => '(9) Spiritual Economy',
             'description' => '',
             'type'        => 'link',
             'default'     => $url,
@@ -175,6 +210,27 @@ class Zume_Tools_Post_Type
             'default'     => $url,
             'section'     => 'tools',
         );
+        $fields['13'] = array(
+            'name'        => '(13) Greatest Blessing',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['14'] = array(
+            'name'        => '(14) Duckling Discipleship',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['15'] = array(
+            'name'        => '(15) Seeing Where Gods Kingdom Isnt',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
         $fields['16'] = array(
             'name'        => "(16) Lord's Supper",
             'description' => '',
@@ -189,8 +245,29 @@ class Zume_Tools_Post_Type
             'default'     => $url,
             'section'     => 'tools',
         );
+        $fields['18'] = array(
+            'name'        => '(18) Person of Peace',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['19'] = array(
+            'name'        => '(19) Bless Prayer',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
         $fields['20'] = array(
-            'name'        => '(20) 3|3 Groups',
+            'name'        => '(20) Faithfulness',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['21'] = array(
+            'name'        => '(21) 3|3 Groups',
             'description' => '',
             'type'        => 'link',
             'default'     => $url,
@@ -203,8 +280,50 @@ class Zume_Tools_Post_Type
             'default'     => $url,
             'section'     => 'tools',
         );
+        $fields['23'] = array(
+            'name'        => '(23) Leadership Cells',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['24'] = array(
+            'name'        => '(24) Non-Sequential Growth',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['25'] = array(
+            'name'        => '(25) Pace',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['26'] = array(
+            'name'        => '(26) Part of Two Churches',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['27'] = array(
+            'name'        => '(27) 3-Month Plan',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
         $fields['28'] = array(
             'name'        => '(28) Coaching Checklist',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['29'] = array(
+            'name'        => '(29) Leadership Networks',
             'description' => '',
             'type'        => 'link',
             'default'     => $url,
@@ -217,6 +336,21 @@ class Zume_Tools_Post_Type
             'default'     => $url,
             'section'     => 'tools',
         );
+        $fields['31'] = array(
+            'name'        => '(31) Four Fields',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+        $fields['32'] = array(
+            'name'        => '(32) Generation Mapping',
+            'description' => '',
+            'type'        => 'link',
+            'default'     => $url,
+            'section'     => 'tools',
+        );
+
 
 
         return $fields;
@@ -263,7 +397,8 @@ class Zume_Tools_Post_Type
                             echo '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . esc_html( $v['name'] ) . '</label></th>
                                 <td>'.trailingslashit( site_url() ).'<input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /><br><br>';
                             if ( ! empty( $redirect )) {
-                                echo '<a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.$redirect.'"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.$redirect.'" style="width:250px;"/></a><br><br>';
+                                dt_write_log( $redirect );
+                                echo '<a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.urlencode( $redirect ).'"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.urlencode( $redirect ).'" style="width:250px;"/></a><br><br>';
                             }
                             echo 'Publishable QR link: <a href="'. $redirect .'" target="_blank">'. $redirect .'</a><br>';
                             echo 'Redirects to target: <a href="' . $data . '">'.trailingslashit( site_url() ).$data .'</a><br>';
