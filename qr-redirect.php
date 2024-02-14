@@ -222,7 +222,8 @@ class Zume_QR_Redirect
             $link = $this->root_url . $params;
 
 //            header("Location: ".$link, true, 302);
-            dt_write_log( 'Tool: ' . $link ); echo $link;
+            dt_write_log( 'Tool: ' . $link );
+            echo '<div style="font-size:4em;">' . $link . '</div>';
 
             exit();
         }
