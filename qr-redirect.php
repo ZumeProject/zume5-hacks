@@ -202,7 +202,7 @@ class Zume_QR_Redirect
                     FROM wp_posts p
                     JOIN wp_postmeta pm ON pm.post_id=p.ID
                     WHERE p.post_title = %s
-                      AND p.post_type = 'zume_tools'
+                      AND p.post_type = 'zume_qr_redirect'
                       AND pm.meta_key != '_edit_last'
                       AND pm.meta_key != '_edit_lock';
                 ", $language_slug ), ARRAY_A );
