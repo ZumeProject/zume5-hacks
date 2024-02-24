@@ -12,7 +12,7 @@ class Zume_QR_Redirect
     public $page_title = 'Zume Redirect';
     public $root = 'zume_app';
     public $type = 'qr';
-    public $root_url = 'https://zume.training/';
+    public $root_url = 'https://zume5.training/';
     public $mirror_url = 'https://storage.googleapis.com/zume-file-mirror/';
     public $url_token = 'zume_app/qr';
     public $type_name = 'Zume Redirect';

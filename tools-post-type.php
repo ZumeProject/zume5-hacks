@@ -3,7 +3,7 @@ if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class Zume_Tools_Post_Type
+class Zume_Redirect_Post_Type
 {
 
     public $post_type;
@@ -20,7 +20,7 @@ class Zume_Tools_Post_Type
         return self::$_instance;
     }
 
-    public function __construct( $post_type = 'zume_tools', $singular = 'Tool', $plural = 'Tools', $args = array(), $taxonomies = array() ) {
+    public function __construct( $post_type = 'zume_qr_redirect', $singular = 'Redirect', $plural = 'Redirects', $args = array(), $taxonomies = array() ) {
         $this->post_type = $post_type;
         $this->singular = $singular;
         $this->plural = $plural;
@@ -51,33 +51,33 @@ class Zume_Tools_Post_Type
         register_post_type( $this->post_type,
             array(
                 'labels' => array(
-                    'name' => 'Zume Tools',
-                    'singular_name' => 'Zume Tool',
-                    'all_items' => 'All Zume Tools',
+                    'name' => 'Zume Redirects',
+                    'singular_name' => 'Zume Redirect',
+                    'all_items' => 'All Zume Redirects',
                     'add_new' => 'Add New',
-                    'add_new_item' => 'Add New Zume Tool',
+                    'add_new_item' => 'Add New Zume Redirect',
                     'edit' => 'Edit',
-                    'edit_item' => 'Edit Zume Tool',
-                    'new_item' => 'New Zume Tool',
-                    'view_item' => 'View Zume Tool',
-                    'search_items' => 'Search Zume Tools',
+                    'edit_item' => 'Edit Zume Redirect',
+                    'new_item' => 'New Zume Redirect',
+                    'view_item' => 'View Zume Redirect',
+                    'search_items' => 'Search Zume Redirects',
                     'not_found' => 'Nothing found in the Database.',
                     'not_found_in_trash' => 'Nothing found in Trash',
                     'parent_item_colon' => ''
                 ),
-                'description' => 'Zume tools catalog for language videos',
+                'description' => 'Zume Redirects catalog for language videos',
                 'public' => false,
                 'publicly_queryable' => false,
                 'exclude_from_search' => true,
                 'show_ui' => true,
                 'query_var' => true,
-                'menu_position' => 8,
+                'menu_position' => 10,
                 'menu_icon' => 'dashicons-book',
                 'rewrite' => array(
             'slug' => 'zume_video',
             'with_front' => false
             ),
-                'has_archive' => 'zume_tools',
+                'has_archive' => 'zume_redirect',
                 'capability_type' => 'post',
                 'hierarchical' => false,
                 'supports' => array( 'title', 'custom-fields' )
@@ -97,8 +97,8 @@ class Zume_Tools_Post_Type
                 $this->singular,
                 strtolower( $this->singular )
             ),
-            2  => 'Zume Tool updated.',
-            3  => 'Zume Tool deleted.',
+            2  => 'Zume Redirect updated.',
+            3  => 'Zume Redirect deleted.',
             4  => sprintf( '%s updated.', $this->singular ),
             /* translators: %s: date and time of the revision */
             5  => isset( $_GET['revision'] ) ? sprintf( '%1$s restored to revision from %2$s', $this->singular, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
@@ -401,7 +401,7 @@ class Zume_Tools_Post_Type
                                 echo '<a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.urlencode( $redirect ).'"><img src="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data='.urlencode( $redirect ).'" style="width:250px;"/></a><br><br>';
                             }
                             echo 'Publishable QR link: <a href="'. $redirect .'" target="_blank">'. $redirect .'</a><br>';
-                            echo 'Redirects to target: <a href="' . $data . '">'.trailingslashit( site_url() ).$data .'</a><br>';
+                            echo 'Redirects to target: <a href="' . $data . '">'.'https://zume5.training/'.$data .'</a><br>';
                             echo '</td><tr/>' . "\n";
                             break;
 
@@ -512,4 +512,4 @@ class Zume_Tools_Post_Type
         flush_rewrite_rules();
     }
 }
-Zume_Tools_Post_Type::instance();
+Zume_Redirect_Post_Type::instance();
