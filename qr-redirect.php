@@ -219,7 +219,7 @@ class Zume_QR_Redirect
                 }
             }
 
-            $link = $this->root_url . $params;
+            $link = 'https://zume5.training/' . $params;
 
             header("Location: ".$link, true, 302);
             dt_write_log( 'Tool: ' . $link );
